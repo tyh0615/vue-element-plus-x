@@ -1,34 +1,35 @@
 name: Deploy to GitHub Pages
-
 on:
   push:
-    branches: [ main ]  # 推送到 main 时自动部署
-  workflow_dispatch:    # 支持手动触发
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      
+    env:
+      # 强制 Action 使用 Node.js 24 运行，解决弃用报错
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 如果你是纯静态网站（无打包），删除下面 2 步
-      - name: Set up Node.js
+      - name: Use Node.js 24
         uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: 'pnpm'
 
-      - name: Install & Build
-        run: |
-          pnpm install
-          pnpm run build
+      - name: Install dependencies
+        run: pnpm install
 
-      - name: Deploy
+      - name: Build
+        run: pnpm run build
+
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # 👇 这里改成你的打包目录：dist / build / public 等
           publish_dir: ./dist
