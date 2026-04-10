@@ -1,9 +1,7 @@
-import { defineConfig } from "vite-plus";
-import vue from "@vitejs/plugin-vue";
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
-// https://vite.dev/config/
 export default defineConfig({
-  fmt: {},
-  lint: { options: { typeAware: true, typeCheck: true } },
   plugins: [vue()],
+  base: '/', // 设置基础路径为 /
 });
